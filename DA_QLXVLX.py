@@ -16,7 +16,7 @@ def connect_to_database():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Astella250205@",
+            password="Astella250205@", #tùy theo mật khẩu root của bạn
             database="qlxevalaixe"
         )
         print("--- Kết nối CSDL thành công ---")
@@ -473,7 +473,12 @@ def create_phancong_window(parent):
     center_window(root, 1100, 650)
     root.resizable(False, False)
 
-    tree = None 
+    tree = None
+
+    # ====== GIAO DIỆN PHÂN CÔNG ======
+    lbl_title = tk.Label(root, text="PHÂN CÔNG CHUYẾN ĐI", font=("Arial", 18, "bold"))
+    lbl_title.pack(pady=10)
+
     
     # --- Helper Functions ---
     def fetch_available_vehicles():
@@ -565,7 +570,7 @@ def create_phancong_window(parent):
             finally:
                 conn.close()
 
-    # ====== Phân công chuyến đi ======
+    # ====== phân công chuyến đi ======
     def phan_cong():
         selected_maxb = cbb_maxb.get()
         selected_maso_info = cbb_maso.get()
@@ -649,10 +654,7 @@ def create_phancong_window(parent):
             finally:
                 conn.close()
 
-    # ====== GIAO DIỆN PHÂN CÔNG ======
-    lbl_title = tk.Label(root, text="PHÂN CÔNG CHUYẾN ĐI", font=("Arial", 18, "bold"))
-    lbl_title.pack(pady=10)
-
+    
     # --- Frame nhập thông tin ---
     frame_info = tk.Frame(root)
     frame_info.pack(pady=5, padx=10, fill="x")
@@ -704,7 +706,8 @@ def create_phancong_window(parent):
     tree = ttk.Treeview(root, columns=columns, show="headings", height=15)
     
     # Định nghĩa tiêu đề
-    headings = {"mapc": "Mã PC", "ngayphancong": "Ngày PC", "bienso": "Biển số", "taixe": "Tài xế", "diadiemden": "Địa điểm đến", "giodi": "Giờ đi", "gioden": "Giờ đến", "trangthaichuyen": "Trạng thái"}
+    headings = {"mapc": "Mã PC", "ngayphancong": "Ngày PC", "bienso": "Biển số", "taixe": "Tài xế", 
+                "diadiemden": "Địa điểm đến", "giodi": "Giờ đi", "gioden": "Giờ đến", "trangthaichuyen": "Trạng thái"}
     for col in columns:
         tree.heading(col, text=headings[col])
 
@@ -737,7 +740,7 @@ def create_main_menu():
     # Khởi tạo cửa sổ chính
     root = tk.Tk()
     root.title("HỆ THỐNG QUẢN LÝ ĐỒ ÁN")
-    center_window(root, 400, 300)
+    center_window(root, 600, 400)
     root.resizable(False, False)
 
     # Kiểm tra kết nối CSDL trước khi mở menu
@@ -753,9 +756,12 @@ def create_main_menu():
     frame_menu.pack(pady=10)
 
     # Sử dụng command=lambda để truyền root làm parent cho cửa sổ con
-    tk.Button(frame_menu, text="1. Quản lý Xe Buýt", width=25, height=2, command=lambda: create_quanlyxebuyt_window(root), bg="#E3F2FD", fg="#1976D2", relief=tk.RAISED, bd=3).pack(pady=5)
-    tk.Button(frame_menu, text="2. Quản lý Lái Xe", width=25, height=2, command=lambda: create_quanlytaixe_window(root), bg="#E8F5E9", fg="#388E3C", relief=tk.RAISED, bd=3).pack(pady=5)
-    tk.Button(frame_menu, text="3. Phân công Chuyến đi", width=25, height=2, command=lambda: create_phancong_window(root), bg="#FFFDE7", fg="#FBC02D", relief=tk.RAISED, bd=3).pack(pady=5)
+    tk.Button(frame_menu, text="1. Quản lý Xe Buýt", width=25, height=2, command=lambda: create_quanlyxebuyt_window(root), 
+              bg="#E3F2FD", fg="#1976D2", relief=tk.RAISED, bd=3).pack(pady=5)
+    tk.Button(frame_menu, text="2. Quản lý Lái Xe", width=25, height=2, command=lambda: create_quanlytaixe_window(root), 
+              bg="#E8F5E9", fg="#388E3C", relief=tk.RAISED, bd=3).pack(pady=5)
+    tk.Button(frame_menu, text="3. Phân công Chuyến đi", width=25, height=2, command=lambda: create_phancong_window(root), 
+              bg="#FFFDE7", fg="#FBC02D", relief=tk.RAISED, bd=3).pack(pady=5)
     
     tk.Button(root, text="Thoát Ứng dụng", width=25, command=root.quit, bg="#F44336", fg="white").pack(pady=20)
 
