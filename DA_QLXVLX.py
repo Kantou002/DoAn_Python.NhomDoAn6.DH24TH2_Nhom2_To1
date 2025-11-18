@@ -16,7 +16,7 @@ def connect_to_database():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Astella250205@", #tùy theo mật khẩu root của bạn
+            password="Astella250205@", 
             database="qlxevalaixe"
         )
         print("--- Kết nối CSDL thành công ---")
@@ -114,7 +114,7 @@ def create_quanlyxebuyt_window(parent=None):
                 for row in cursor.fetchall():
                     tree.insert("", tk.END, values=row)
             except mysql.connector.Error as err:
-                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu xe buýt: {err}")
+                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu xe buýt: {err}", parent=root)
             finally:
                 conn.close()
 
@@ -126,7 +126,7 @@ def create_quanlyxebuyt_window(parent=None):
         tinhtrang = cbb_tt.get()
         namsx = entry_namsx.get()
         if not (maxb and bienso and hangxe and soghe and tinhtrang and namsx):
-            messagebox.showwarning("Cảnh báo", "Vui lòng điền đầy đủ thông tin.")
+            messagebox.showwarning("Cảnh báo", "Vui lòng điền đầy đủ thông tin.", parent=root)
             return
         
         conn = connect_to_database()
@@ -136,22 +136,22 @@ def create_quanlyxebuyt_window(parent=None):
                 sql = "INSERT INTO xebuyt (maxb, bienso, hangxe, soghe, tinhtrang, namsx) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, (maxb, bienso, hangxe, soghe, tinhtrang, namsx))
                 conn.commit()
-                messagebox.showinfo("Thành Công","Thêm xe buýt thành công.")
+                messagebox.showinfo("Thành Công","Thêm xe buýt thành công.", parent=root)
                 load_data()
                 clear_input()
             except mysql.connector.Error as err:
-                messagebox.showerror("Lỗi", f"Lỗi khi thêm xe buýt: {err}")
+                messagebox.showerror("Lỗi", f"Lỗi khi thêm xe buýt: {err}", parent=root)
             finally:
                 conn.close()
 
     def xoa_xe():
         selected_item = tree.selection()
         if not selected_item:
-            messagebox.showwarning("Cảnh báo", "Vui lòng chọn xe buýt để xóa.")
+            messagebox.showwarning("Cảnh báo", "Vui lòng chọn xe buýt để xóa.", parent=root)
             return
         
         maxb = tree.item(selected_item)["values"][0]
-        if not messagebox.askyesno("Xác nhận Xóa", f"Bạn có chắc muốn xóa xe buýt có Mã: {maxb}?"):
+        if not messagebox.askyesno("Xác nhận Xóa", f"Bạn có chắc muốn xóa xe buýt có Mã: {maxb}?", parent=root):
             return
 
         conn = connect_to_database()
@@ -160,18 +160,19 @@ def create_quanlyxebuyt_window(parent=None):
             try:
                 cursor.execute("DELETE FROM xebuyt WHERE maxb = %s", (maxb,))
                 conn.commit()
-                messagebox.showinfo("Thành Công", "Xóa xe buýt thành công.")
+                messagebox.showinfo("Thành Công", "Xóa xe buýt thành công.", parent=root)
                 load_data()
                 clear_input()
             except mysql.connector.Error as err:
-                messagebox.showerror("Lỗi", f"Lỗi khi xóa xe buýt: {err}")
+                messagebox.showerror("Lỗi", f"Lỗi khi xóa xe buýt: {err}", parent=root)
             finally:
                 conn.close()
 
-    def select_item(event):
+    def select_item(event):         
         selected_item = tree.focus()
         if selected_item:
             values = tree.item(selected_item)["values"]
+            entry_maxb.config(state=tk.NORMAL)
             clear_input()
             
             entry_maxb.insert(0, values[0])
@@ -182,6 +183,19 @@ def create_quanlyxebuyt_window(parent=None):
             entry_namsx.insert(0, values[5])
 
             entry_maxb.config(state=tk.DISABLED)
+            entry_bienso.config(state=tk.DISABLED)
+            entry_hangxe.config(state=tk.DISABLED)
+            entry_soghe.config(state=tk.DISABLED)
+            cbb_tt.config(state=tk.DISABLED)
+            entry_namsx.config(state=tk.DISABLED)
+            
+    def sua_xe():
+        entry_maxb.config(state=tk.NORMAL)
+        entry_bienso.config(state=tk.NORMAL)
+        entry_hangxe.config(state=tk.NORMAL)
+        entry_soghe.config(state=tk.NORMAL)
+        cbb_tt.config(state=tk.NORMAL)
+        entry_namsx.config(state=tk.NORMAL)
 
     def luu_xe():
         maxb=entry_maxb.get()
@@ -192,7 +206,7 @@ def create_quanlyxebuyt_window(parent=None):
         namsx=entry_namsx.get()
         
         if not (maxb and bienso and hangxe and soghe and tinhtrang and namsx):
-            messagebox.showwarning("Cảnh báo", "Vui lòng điền đầy đủ thông tin.")
+            messagebox.showwarning("Cảnh báo", "Vui lòng điền đầy đủ thông tin.", parent=root)
             return
 
         conn=connect_to_database()
@@ -202,11 +216,11 @@ def create_quanlyxebuyt_window(parent=None):
                 sql = "UPDATE xebuyt SET bienso=%s, hangxe=%s, soghe=%s, tinhtrang=%s, namsx=%s WHERE maxb=%s"
                 cursor.execute(sql, (bienso, hangxe, soghe, tinhtrang, namsx, maxb))
                 conn.commit()
-                messagebox.showinfo("Thành Công","Cập nhật xe buýt thành công.")
+                messagebox.showinfo("Thành Công","Cập nhật xe buýt thành công.", parent=root)
                 load_data()
                 clear_input()
             except mysql.connector.Error as err:
-                messagebox.showerror("Lỗi", f"Lỗi khi cập nhật xe buýt: {err}")
+                messagebox.showerror("Lỗi", f"Lỗi khi cập nhật xe buýt: {err}", parent=root)
             finally:
                 conn.close()
     
@@ -237,7 +251,7 @@ def create_quanlyxebuyt_window(parent=None):
 
     tk.Button(frame_btn, text="Thêm", width=8, command=them_xe).grid(row=0, column=0, padx=5)
     tk.Button(frame_btn, text="Lưu", width=8, command=luu_xe).grid(row=0, column=1, padx=5)
-    tk.Button(frame_btn, text="Sửa (Tải lên)", width=10, command=lambda: tree.bind("<<TreeviewSelect>>", select_item)).grid(row=0, column=2, padx=5)
+    tk.Button(frame_btn, text="Sửa (Tải lên)", width=10, command= sua_xe).grid(row=0, column=2, padx=5)
     tk.Button(frame_btn, text="Hủy", width=8, command=clear_input).grid(row=0, column=3, padx=5)
     tk.Button(frame_btn, text="Xóa", width=8, command=xoa_xe).grid(row=0, column=4, padx=5)
     tk.Button(frame_btn, text="Thoát", width=8, command=root.destroy).grid(row=0, column=5, padx=5)
@@ -324,7 +338,7 @@ def create_quanlytaixe_window(parent=None):
                     
                     tree.insert("", tk.END, values=row_list)
             except mysql.connector.Error as err:
-                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu tài xế: {err}")
+                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu tài xế: {err}", parent=root2)
             finally:
                 conn.close()
 
@@ -332,6 +346,12 @@ def create_quanlytaixe_window(parent=None):
         selected = tree.focus()
         if selected:
             values = tree.item(selected)["values"]
+            entry_maso.config(state=tk.NORMAL)
+            entry_holot.config(state=tk.NORMAL)
+            entry_ten.config(state=tk.NORMAL)
+            date_entry.config(state='normal')
+            entry_sdt.config(state=tk.NORMAL)
+            entry_banglai.config(state=tk.NORMAL)
             clear_input()
             
             entry_maso.insert(0, values[0])
@@ -343,6 +363,14 @@ def create_quanlytaixe_window(parent=None):
             entry_banglai.insert(0, values[6])
             
             entry_maso.config(state=tk.DISABLED)
+            entry_holot.config(state=tk.DISABLED)
+            entry_ten.config(state=tk.DISABLED)
+            date_entry.config(state='disabled')
+            gender_var.trace_add('unset', lambda *args: None)  # Vô hiệu hóa thay đổi giá trị
+            entry_sdt.config(state=tk.DISABLED)
+            entry_banglai.config(state=tk.DISABLED)
+
+
 
     def them_tx():
         maso = entry_maso.get()
@@ -354,7 +382,7 @@ def create_quanlytaixe_window(parent=None):
         banglai = entry_banglai.get()
 
         if maso == "" or holot == "" or ten == "":
-            messagebox.showwarning("Thiếu dữ liệu", "Vui lòng nhập đủ thông tin Họ tên và Mã số")
+            messagebox.showwarning("Thiếu dữ liệu", "Vui lòng nhập đủ thông tin Họ tên và Mã số", parent=root2)
             return
 
         conn = connect_to_database()
@@ -364,22 +392,22 @@ def create_quanlytaixe_window(parent=None):
                 sql = "INSERT INTO taixe (maso, holot, ten, phai, ngaysinh, sdt, banglai) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 cur.execute(sql, (maso, holot, ten, phai, ngaysinh, sdt, banglai))
                 conn.commit()
-                messagebox.showinfo("Thành Công", "Thêm tài xế thành công.")
+                messagebox.showinfo("Thành Công", "Thêm tài xế thành công.", parent=root2)
                 load_data()
                 clear_input()
             except mysql.connector.Error as e:
-                messagebox.showerror("Lỗi", f"Lỗi khi thêm tài xế: {e}")
+                messagebox.showerror("Lỗi", f"Lỗi khi thêm tài xế: {e}", parent=root2)
             finally:
                 conn.close()
 
     def xoa_tx():
         selected = tree.selection()
         if not selected:
-            messagebox.showwarning("Chưa chọn", "Hãy chọn tài xế để xóa")
+            messagebox.showwarning("Chưa chọn", "Hãy chọn tài xế để xóa", parent=root2)
             return
         
         maso = tree.item(selected)["values"][0]
-        if not messagebox.askyesno("Xác nhận Xóa", f"Bạn có chắc muốn xóa tài xế có Mã: {maso}?"):
+        if not messagebox.askyesno("Xác nhận Xóa", f"Bạn có chắc muốn xóa tài xế có Mã: {maso}?", parent=root2):
             return
 
         conn = connect_to_database()
@@ -388,13 +416,20 @@ def create_quanlytaixe_window(parent=None):
             try:
                 cur.execute("DELETE FROM taixe WHERE maso=%s", (maso,))
                 conn.commit()
-                messagebox.showinfo("Thành Công", "Xóa tài xế thành công.")
+                messagebox.showinfo("Thành Công", "Xóa tài xế thành công.", parent=root2)
                 load_data()
                 clear_input()
             except mysql.connector.Error as e:
-                messagebox.showerror("Lỗi", f"Lỗi khi xóa tài xế: {e}")
+                messagebox.showerror("Lỗi", f"Lỗi khi xóa tài xế: {e}", parent=root2)
             finally:
                 conn.close()
+    def sua_tx():
+        entry_maso.config(state=tk.NORMAL)
+        entry_holot.config(state=tk.NORMAL)
+        entry_ten.config(state=tk.NORMAL)
+        date_entry.config(state='normal')
+        entry_sdt.config(state=tk.NORMAL)
+        entry_banglai.config(state=tk.NORMAL)
 
     def luu_tx():
         maso = entry_maso.get()
@@ -406,7 +441,7 @@ def create_quanlytaixe_window(parent=None):
         banglai = entry_banglai.get()
 
         if maso == "":
-             messagebox.showwarning("Cảnh báo", "Vui lòng chọn tài xế cần sửa.")
+             messagebox.showwarning("Cảnh báo", "Vui lòng chọn tài xế cần sửa.", parent=root2)
              return
 
         conn = connect_to_database()
@@ -418,11 +453,11 @@ def create_quanlytaixe_window(parent=None):
                          WHERE maso=%s"""
                 cur.execute(sql, (holot, ten, phai, ngaysinh, sdt, banglai, maso))
                 conn.commit()
-                messagebox.showinfo("Thành Công", "Cập nhật tài xế thành công.")
+                messagebox.showinfo("Thành Công", "Cập nhật tài xế thành công.", parent=root2)
                 load_data()
                 clear_input()
             except mysql.connector.Error as e:
-                messagebox.showerror("Lỗi", f"Lỗi khi cập nhật tài xế: {e}")
+                messagebox.showerror("Lỗi", f"Lỗi khi cập nhật tài xế: {e}", parent=root2)
             finally:
                 conn.close()
                 
@@ -454,7 +489,7 @@ def create_quanlytaixe_window(parent=None):
 
     tk.Button(frame_btn, text="Thêm", width=8, command=them_tx).grid(row=0, column=0, padx=5)
     tk.Button(frame_btn, text="Lưu", width=8, command=luu_tx).grid(row=0, column=1, padx=5)
-    tk.Button(frame_btn, text="Sửa (Tải lên)", width=10, command=lambda: tree.bind("<<TreeviewSelect>>", select_item)).grid(row=0, column=2, padx=5)
+    tk.Button(frame_btn, text="Sửa (Tải lên)", width=10, command=sua_tx).grid(row=0, column=2, padx=5)
     tk.Button(frame_btn, text="Hủy", width=8, command=clear_input).grid(row=0, column=3, padx=5)
     tk.Button(frame_btn, text="Xóa", width=8, command=xoa_tx).grid(row=0, column=4, padx=5)
     tk.Button(frame_btn, text="Thoát", width=8, command=root2.destroy).grid(row=0, column=5, padx=5)
@@ -534,7 +569,16 @@ def create_phancong_window(parent):
             try:
                 # SELECT 8 cột (Đã sửa id_pc -> mapc, gioketthuc -> gioden)
                 sql = """
-                SELECT * 
+                SELECT
+                    pc.mapc,            
+                    pc.ngayphancong,    
+                    pc.maxb,            
+                    tx.holot,           
+                    tx.ten,             
+                    pc.diadiemden,      
+                    pc.giodi,          
+                    pc.gioden,         
+                    pc.trangthaichuyen  
                 FROM phancong pc
                 JOIN xebuyt xb ON pc.maxb = xb.maxb
                 JOIN taixe tx ON pc.maso = tx.maso
@@ -566,7 +610,7 @@ def create_phancong_window(parent):
                         trangthai_vn 
                     ))
             except mysql.connector.Error as err:
-                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu phân công: {err}")
+                 messagebox.showerror("Lỗi Tải Dữ liệu", f"Lỗi khi tải dữ liệu phân công: {err}", parent=root)
             finally:
                 conn.close()
 
@@ -583,7 +627,7 @@ def create_phancong_window(parent):
         maso = selected_maso_info.split(' - ')[0] if ' - ' in selected_maso_info else None
 
         if not (selected_maxb and maso and ngaypc and diadiemden and giodi):
-            messagebox.showwarning("Cảnh báo", "Vui lòng chọn Xe, Tài xế và điền các thông tin bắt buộc.")
+            messagebox.showwarning("Cảnh báo", "Vui lòng chọn Xe, Tài xế và điền các thông tin bắt buộc.", parent=root)
             return
 
         conn = connect_to_database()
@@ -599,19 +643,19 @@ def create_phancong_window(parent):
                 # Ghi chú: Nếu có cột tinhtrang trong taixe, lệnh ở đây sẽ là: UPDATE taixe SET tinhtrang='on_trip' WHERE maso=%s
 
                 conn.commit()
-                messagebox.showinfo("Thành Công", "Phân công chuyến đi thành công.")
+                messagebox.showinfo("Thành Công", "Phân công chuyến đi thành công.", parent=root)
                 load_data()
                 populate_comboboxes()
             except mysql.connector.Error as err:
-                messagebox.showerror("Lỗi", f"Lỗi khi phân công: {err}")
+                messagebox.showerror("Lỗi", f"Lỗi khi phân công: {err}", parent=root)
             finally:
-                conn.close()
+                conn.close() 
 
     # ====== Kết thúc chuyến đi ======
     def ket_thuc_chuyen():
         selected_item = tree.selection()
         if not selected_item:
-            messagebox.showwarning("Cảnh báo", "Vui lòng chọn chuyến đi để kết thúc.")
+            messagebox.showwarning("Cảnh báo", "Vui lòng chọn chuyến đi để kết thúc.", parent=root)
             return
 
         values = tree.item(selected_item)["values"]
@@ -620,7 +664,7 @@ def create_phancong_window(parent):
         trangthai_hien_tai = values[7].replace('Đang hoạt động', 'Đã đi') # Quay về giá trị SQL
         
         if trangthai_hien_tai == 'completed' or trangthai_hien_tai == 'Đã hoàn thành':
-            messagebox.showinfo("Thông báo", "Chuyến đi này đã hoàn thành rồi.")
+            messagebox.showinfo("Thông báo", "Chuyến đi này đã hoàn thành rồi.", parent=root)
             return
         
         conn = connect_to_database()
@@ -629,7 +673,7 @@ def create_phancong_window(parent):
             cursor.execute("SELECT maxb FROM phancong WHERE mapc = %s", (mapc,)) 
             result = cursor.fetchone()
             if not result:
-                 messagebox.showerror("Lỗi", "Không tìm thấy thông tin phân công.")
+                 messagebox.showerror("Lỗi", "Không tìm thấy thông tin phân công.", parent=root)
                  conn.close()
                  return
 
@@ -643,18 +687,36 @@ def create_phancong_window(parent):
                 
                 # 2. Cập nhật trạng thái Xe thành 'available'
                 cursor.execute("UPDATE xebuyt SET tinhtrang='available' WHERE maxb=%s", (maxb_pc,))
-                # Ghi chú: Không cập nhật taixe vì thiếu cột tinhtrang
 
                 conn.commit()
-                messagebox.showinfo("Thành Công", f"Chuyến đi của xe {bienso} đã kết thúc và Xe đã sẵn sàng.")
+                messagebox.showinfo("Thành Công", f"Chuyến đi của xe {bienso} đã kết thúc và Xe đã sẵn sàng.", parent=root)
                 load_data()
                 populate_comboboxes()
             except mysql.connector.Error as err:
-                messagebox.showerror("Lỗi", f"Lỗi khi kết thúc chuyến: {err}")
+                messagebox.showerror("Lỗi", f"Lỗi khi kết thúc chuyến: {err}", )
             finally:
                 conn.close()
-
-    
+    def xoa_chuyen():
+        selected = tree.selection()
+        if not selected:
+            messagebox.showwarning("Chưa chọn", "Hãy chọn chuyến đi để xóa", parent=root)
+            return
+        mapc = tree.item(selected)["values"][0]
+        if not messagebox.askyesno("Xác nhận Xóa", f"Bạn có chắc muốn xóa chuyến đi Mã PC: {mapc}?", parent=root):
+            return
+        conn = connect_to_database()
+        if conn:
+            cur = conn.cursor()
+            try:
+                cur.execute("DELETE FROM phancong WHERE mapc=%s", (mapc,))
+                conn.commit()
+                messagebox.showinfo("Thành Công", "Xóa chuyến đi thành công.", parent=root)
+                load_data()
+            except mysql.connector.Error as e:
+                messagebox.showerror("Lỗi", f"Lỗi khi xóa chuyến đi: {e}", parent=root)
+            finally:
+                conn.close()
+        
     # --- Frame nhập thông tin ---
     frame_info = tk.Frame(root)
     frame_info.pack(pady=5, padx=10, fill="x")
@@ -696,7 +758,8 @@ def create_phancong_window(parent):
 
     tk.Button(frame_btn, text="PHÂN CÔNG MỚI", width=18, command=phan_cong, bg="#4CAF50", fg="white").grid(row=0, column=0, padx=10)
     tk.Button(frame_btn, text="KẾT THÚC CHUYẾN", width=18, command=ket_thuc_chuyen, bg="#FF9800", fg="white").grid(row=0, column=1, padx=10)
-    tk.Button(frame_btn, text="Đóng", width=10, command=root.destroy).grid(row=0, column=2, padx=10)
+    tk.Button(frame_btn, text="XÓA CHUYẾN", width=18, command=xoa_chuyen, bg="#F44336", fg="white").grid(row=0, column=2, padx=10)
+    tk.Button(frame_btn, text="Đóng", width=10, command=root.destroy).grid(row=0, column=3, padx=10)
     
     # --- Bảng danh sách phân công ---
     lbl_ds = tk.Label(root, text="Lịch sử Phân công Chuyến đi", font=("Arial", 10, "bold"))
@@ -763,7 +826,7 @@ def create_main_menu():
     tk.Button(frame_menu, text="3. Phân công Chuyến đi", width=25, height=2, command=lambda: create_phancong_window(root), 
               bg="#FFFDE7", fg="#FBC02D", relief=tk.RAISED, bd=3).pack(pady=5)
     
-    tk.Button(root, text="Thoát Ứng dụng", width=25, command=root.quit, bg="#F44336", fg="white").pack(pady=20)
+    tk.Button(root, text="Thoát Ứng dụng", width=25, command=root.quit, bg="#F43636", fg="white").pack(pady=20)
 
     root.mainloop()
 
